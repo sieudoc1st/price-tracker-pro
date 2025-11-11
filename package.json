@@ -7,9 +7,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "postbuild": "electron-builder",
-    "build:win": "npm run build -- --win"
+    "build": "vite build && electron-builder",
+    "build:win": "vite build && electron-builder --win"
   },
   "dependencies": {
     "axios": "^1.7.2",
