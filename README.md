@@ -31,11 +31,11 @@ Lệnh này sẽ thực hiện các công việc sau:
 - Tự động tải lại giao diện ngay lập tức khi bạn lưu thay đổi trong code (hot-reloading), giúp quá trình phát triển nhanh hơn.
 - Mở sẵn công cụ lập trình (DevTools) để bạn có thể dễ dàng kiểm tra lỗi.
 
-## 3. Đóng gói ứng dụng thành file `.exe`
+## 3. Đóng gói ứng dụng thành file `.exe` (Portable)
 
-Khi ứng dụng đã hoàn thiện và bạn muốn chia sẻ nó cho người khác trong công ty để họ có thể cài đặt và sử dụng một cách dễ dàng, bạn cần đóng gói nó lại.
+Khi ứng dụng đã hoàn thiện và bạn muốn chia sẻ nó cho người khác trong công ty, bạn cần đóng gói nó lại. Lệnh sau sẽ tạo ra một file **portable `.exe`**, nghĩa là người dùng có thể chạy trực tiếp mà không cần cài đặt.
 
-Để tạo một file cài đặt `.exe` cho hệ điều hành Windows, hãy chạy lệnh:
+Để tạo file `.exe` cho hệ điều hành Windows, hãy chạy lệnh:
 
 ```bash
 npm run build:win
@@ -46,20 +46,22 @@ npm run build:win
 Nó sẽ tự động thực hiện các bước:
 1.  Build code React của bạn thành các file HTML/CSS/JS tĩnh.
 2.  Build code của Electron.
-3.  Sử dụng công cụ `electron-builder` để đóng gói tất cả các file cần thiết vào một trình cài đặt `.exe` duy nhất.
+3.  Sử dụng công cụ `electron-builder` để đóng gói tất cả các file cần thiết vào một file `.exe` duy nhất.
 
 ## 4. Cách sử dụng và phân phối ứng dụng
 
 Sau khi quá trình đóng gói ở bước 3 hoàn tất, bạn sẽ thấy một thư mục mới có tên là `release` được tạo ra trong thư mục gốc của dự án.
 
--   **Bên trong thư mục `release`**, bạn sẽ tìm thấy file cài đặt, ví dụ: `Price Tracker Pro Setup 1.0.0.exe`.
+-   **Bên trong thư mục `release`**, bạn sẽ tìm thấy file ứng dụng, ví dụ: `Price Tracker Pro 1.0.0.exe`.
 
 -   **Bạn chỉ cần gửi file `.exe` này** cho đồng nghiệp hoặc người dùng cuối.
 
-Họ chỉ cần thực hiện các thao tác đơn giản sau:
-1.  Nháy đúp chuột vào file `.exe` để bắt đầu quá trình cài đặt.
-2.  Làm theo các bước hướng dẫn trên màn hình (chọn nơi cài đặt, v.v.).
-3.  Sau khi cài đặt xong, một biểu tượng (shortcut) của ứng dụng "Price Tracker Pro" sẽ xuất hiện trên Màn hình desktop hoặc trong Start Menu.
-4.  Họ có thể mở ứng dụng và bắt đầu sử dụng ngay lập tức. Mọi dữ liệu (danh sách sản phẩm) sẽ được tự động lưu trên chính máy tính của họ.
+Họ chỉ cần nháy đúp chuột vào file `.exe` để **chạy ứng dụng ngay lập tức**. Không cần phải cài đặt. Mọi dữ liệu (danh sách sản phẩm) sẽ được tự động lưu trên chính máy tính của họ trong thư mục dữ liệu người dùng.
 
-**Người dùng cuối không cần phải cài đặt Node.js hay chạy bất kỳ dòng lệnh phức tạp nào.**
+## (Tùy chọn) Thêm Icon tùy chỉnh cho ứng dụng
+
+Ứng dụng sẽ có một icon mặc định của Electron. Nếu bạn muốn thay đổi nó:
+1.  Chuẩn bị một file icon định dạng `.ico` cho Windows.
+2.  Đặt tên file là `icon.ico`.
+3.  Đặt file đó vào thư mục `build` ở gốc dự án (thay thế file `placeholder.txt` có sẵn).
+4.  Chạy lại lệnh `npm run build:win`. File `.exe` mới sẽ có icon của bạn.

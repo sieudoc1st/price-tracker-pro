@@ -1,0 +1,2 @@
+This file is a placeholder to ensure the 'build' directory is included in git.
+You can replace this file with 'icon.ico' to set a custom application icon.
