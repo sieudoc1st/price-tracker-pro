@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "postbuild": "electron-builder",
     "build:win": "npm run build -- --win"
   },
