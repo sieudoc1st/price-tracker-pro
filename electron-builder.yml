@@ -4,6 +4,7 @@ directories:
   output: release
 files:
   - dist/**/*
+  - dist-electron/**/*
   - package.json
 win:
   target: nsis

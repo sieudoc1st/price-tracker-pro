@@ -2,7 +2,7 @@
   "name": "price-tracker-pro",
   "version": "1.0.0",
   "description": "Desktop app to track product prices.",
-  "main": "dist/electron.js",
+  "main": "dist-electron/electron.js",
   "author": "Your Name",
   "license": "MIT",
   "scripts": {
