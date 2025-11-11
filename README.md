@@ -1,53 +1,65 @@
-# Price Tracker Pro - Hướng dẫn cài đặt
+# Price Tracker Pro - Hướng dẫn sử dụng
 
-Dự án này bao gồm hai phần:
-1.  **`backend`**: Một máy chủ Node.js/Express để xử lý scraping và quản lý cơ sở dữ liệu SQLite.
-2.  **`frontend`**: Một ứng dụng React (Vite) để hiển thị giao diện người dùng.
-
-Bạn cần chạy cả hai phần này cùng lúc để ứng dụng hoạt động đầy đủ.
+Đây là một ứng dụng desktop để theo dõi giá sản phẩm, được xây dựng bằng React và đóng gói bằng Electron.
 
 ## Yêu cầu
-*   [Node.js](https://nodejs.org/) (phiên bản 18.x trở lên)
-*   npm (thường được cài đặt cùng với Node.js)
 
-## Cài đặt và Chạy Backend
+-   [Node.js](https://nodejs.org/) (phiên bản 18 trở lên được khuyến nghị)
+-   npm (thường đi kèm với Node.js)
 
-1.  **Mở một cửa sổ terminal mới.**
-2.  **Di chuyển vào thư mục `backend`:**
-    ```bash
-    cd backend
-    ```
-3.  **Cài đặt các gói phụ thuộc:**
-    ```bash
-    npm install
-    ```
-4.  **Khởi động máy chủ backend:**
-    ```bash
-    npm start
-    ```
-    Máy chủ sẽ bắt đầu chạy trên `http://localhost:8080`. File cơ sở dữ liệu `database.db` sẽ được tự động tạo trong thư mục `backend` nếu chưa tồn tại.
+## 1. Cài đặt ban đầu
 
-## Cài đặt và Chạy Frontend
+Sau khi có mã nguồn, bạn chỉ cần thực hiện một bước cài đặt duy nhất. Mở terminal (hoặc Command Prompt, PowerShell) trong thư mục gốc của dự án và chạy lệnh sau:
 
-1.  **Mở một cửa sổ terminal thứ hai** (giữ nguyên cửa sổ terminal của backend đang chạy).
-2.  **Di chuyển vào thư mục `frontend`:**
-    ```bash
-    cd frontend
-    ```
-3.  **Cài đặt các gói phụ thuộc:**
-    ```bash
-    npm install
-    ```
-4.  **Khởi động máy chủ phát triển frontend:**
-    ```bash
-    npm run dev
-    ```
-    Terminal sẽ hiển thị một địa chỉ URL, thường là `http://localhost:5173`.
+```bash
+npm install
+```
 
-## Sử dụng ứng dụng
+Lệnh này sẽ đọc file `package.json` và tự động tải về tất cả các thư viện cần thiết cho cả Electron, React, và các công cụ để đóng gói ứng dụng.
 
-1.  Sau khi cả hai máy chủ đã chạy, hãy mở trình duyệt và truy cập vào địa chỉ URL của frontend (ví dụ: `http://localhost:5173`).
-2.  Frontend sẽ tự động kết nối đến backend ở `http://localhost:8080` để lấy dữ liệu sản phẩm và thực hiện scraping.
-3.  Bây giờ bạn có thể thêm, xóa và kiểm tra giá sản phẩm. Dữ liệu sẽ được lưu trong file `database.db`.
+## 2. Chạy ứng dụng ở chế độ phát triển
 
-Chúc bạn thành công!
+Khi bạn muốn lập trình, chỉnh sửa hoặc kiểm thử ứng dụng, hãy sử dụng lệnh sau:
+
+```bash
+npm run dev
+```
+
+Lệnh này sẽ thực hiện các công việc sau:
+- Khởi động một server phát triển cho giao diện React (sử dụng Vite).
+- Mở cửa sổ ứng dụng Electron.
+- Tự động tải lại giao diện ngay lập tức khi bạn lưu thay đổi trong code (hot-reloading), giúp quá trình phát triển nhanh hơn.
+- Mở sẵn công cụ lập trình (DevTools) để bạn có thể dễ dàng kiểm tra lỗi.
+
+## 3. Đóng gói ứng dụng thành file `.exe`
+
+Khi ứng dụng đã hoàn thiện và bạn muốn chia sẻ nó cho người khác trong công ty để họ có thể cài đặt và sử dụng một cách dễ dàng, bạn cần đóng gói nó lại.
+
+Để tạo một file cài đặt `.exe` cho hệ điều hành Windows, hãy chạy lệnh:
+
+```bash
+npm run build:win
+```
+
+**Lưu ý:** Quá trình này có thể mất vài phút để hoàn tất.
+
+Nó sẽ tự động thực hiện các bước:
+1.  Build code React của bạn thành các file HTML/CSS/JS tĩnh.
+2.  Build code của Electron.
+3.  Sử dụng công cụ `electron-builder` để đóng gói tất cả các file cần thiết vào một trình cài đặt `.exe` duy nhất.
+
+## 4. Cách sử dụng và phân phối ứng dụng
+
+Sau khi quá trình đóng gói ở bước 3 hoàn tất, bạn sẽ thấy một thư mục mới có tên là `release` được tạo ra trong thư mục gốc của dự án.
+
+-   **Bên trong thư mục `release`**, bạn sẽ tìm thấy file cài đặt, ví dụ: `Price Tracker Pro Setup 1.0.0.exe`.
+
+-   **Bạn chỉ cần gửi file `.exe` này** cho đồng nghiệp hoặc người dùng cuối.
+
+Họ chỉ cần thực hiện các thao tác đơn giản sau:
+1.  Nháy đúp chuột vào file `.exe` để bắt đầu quá trình cài đặt.
+2.  Làm theo các bước hướng dẫn trên màn hình (chọn nơi cài đặt, v.v.).
+3.  Sau khi cài đặt xong, một biểu tượng (shortcut) của ứng dụng "Price Tracker Pro" sẽ xuất hiện trên Màn hình desktop hoặc trong Start Menu.
+4.  Họ có thể mở ứng dụng và bắt đầu sử dụng ngay lập tức. Mọi dữ liệu (danh sách sản phẩm) sẽ được tự động lưu trên chính máy tính của họ.
+
+**Người dùng cuối không cần phải cài đặt Node.js hay chạy bất kỳ dòng lệnh phức tạp nào.**

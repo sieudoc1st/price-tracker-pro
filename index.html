@@ -1,41 +1,32 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Price Tracker Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              'primary': '#0D1117',
-              'secondary': '#161B22',
-              'accent': '#58A6FF',
-              'muted': '#8B949E',
-              'border': '#30363D',
-            },
-          },
-        },
-      }
-    </script>
   <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "path": "https://aistudiocdn.com/path@^0.12.7",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "vite": "https://aistudiocdn.com/vite@^7.2.2",
     "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.0",
-    "vite": "https://aistudiocdn.com/vite@^7.2.2"
+    "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+    "vite-plugin-electron-renderer": "https://aistudiocdn.com/vite-plugin-electron-renderer@^0.14.6",
+    "vite-plugin-electron": "https://aistudiocdn.com/vite-plugin-electron@^0.29.0"
   }
 }
 </script>
 </head>
-  <body class="bg-primary text-gray-200">
+  <body>
     <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
