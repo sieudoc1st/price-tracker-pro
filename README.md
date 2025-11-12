@@ -15,6 +15,7 @@ Bạn cần chạy cả hai phần này cùng lúc để ứng dụng hoạt đ�
 1.  **Mở một cửa sổ terminal mới.**
 2.  **Di chuyển vào thư mục `backend`:**
     ```bash
+    cd price-tracker-pro
     cd backend
     ```
 3.  **Cài đặt các gói phụ thuộc:**
@@ -32,6 +33,7 @@ Bạn cần chạy cả hai phần này cùng lúc để ứng dụng hoạt đ�
 1.  **Mở một cửa sổ terminal thứ hai** (giữ nguyên cửa sổ terminal của backend đang chạy).
 2.  **Di chuyển vào thư mục `frontend`:**
     ```bash
+    cd price-tracker-pro
     cd frontend
     ```
 3.  **Cài đặt các gói phụ thuộc:**
