@@ -22,6 +22,8 @@ export interface ProductData {
   url: string;
   website: string;
   scraperType: ScraperType;
+  category?: string;
+  brand?: string;
 }
 
 // Loại dữ liệu sử dụng trong state của frontend

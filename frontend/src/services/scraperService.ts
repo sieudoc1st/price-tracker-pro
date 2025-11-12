@@ -21,7 +21,8 @@ export const addProduct = async (product: ProductData): Promise<ProductData> => 
         body: JSON.stringify(product),
     });
     if (!response.ok) {
-        throw new Error('Failed to add product');
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to add product: ${response.statusText}`);
     }
     return response.json();
 };
@@ -31,8 +32,25 @@ export const deleteProduct = async (instanceId: string): Promise<void> => {
         method: 'DELETE',
     });
     if (!response.ok) {
-        throw new Error('Failed to delete product');
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to delete product: ${response.statusText}`);
     }
+};
+
+export const updateProduct = async (product: ProductData): Promise<ProductData> => {
+    const response = await fetch(`${API_BASE_URL}/products/${product.instanceId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(product),
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update product: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.product || data;
 };
 
 
@@ -76,6 +94,17 @@ export const fetchProductPrice = async (url: string, scraperType: ScraperType): 
         }
 
         throw error;
+    }
+};
+
+// Health check
+export const checkBackendHealth = async (): Promise<boolean> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        return response.ok;
+    } catch (error) {
+        console.error('Backend health check failed:', error);
+        return false;
     }
 };
 

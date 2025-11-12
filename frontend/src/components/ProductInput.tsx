@@ -16,17 +16,30 @@ export const ProductInput: React.FC<ProductInputProps> = ({ onAddProduct, onAddF
   const [url, setUrl] = useState('');
   const [website, setWebsite] = useState('');
   const [scraperType, setScraperType] = useState<ScraperType>('generic');
+  const [category, setCategory] = useState('');
+  const [brand, setBrand] = useState('');
   const [pastedText, setPastedText] = useState('');
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (productId && name && url && website) {
-      onAddProduct({ productId, name, url, website, scraperType });
+      const productData: any = {
+        productId,
+        name,
+        url,
+        website,
+        scraperType,
+      };
+      if (category) productData.category = category;
+      if (brand) productData.brand = brand;
+      onAddProduct(productData);
       setProductId('');
       setName('');
       setUrl('');
       setWebsite('');
       setScraperType('generic');
+      setCategory('');
+      setBrand('');
     }
   };
 
@@ -83,6 +96,14 @@ export const ProductInput: React.FC<ProductInputProps> = ({ onAddProduct, onAddF
               </select>
               <p className="text-xs text-muted mt-1">Chọn nền tảng của trang web.</p>
             </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-muted mb-1">Category (Danh mục)</label>
+              <input type="text" id="category" value={category} onChange={(e) => setCategory(e.target.value)} className={inputClasses} placeholder="e.g., Robot hút bụi" />
+            </div>
+            <div>
+              <label htmlFor="brand" className="block text-sm font-medium text-muted mb-1">Brand (Hãng)</label>
+              <input type="text" id="brand" value={brand} onChange={(e) => setBrand(e.target.value)} className={inputClasses} placeholder="e.g., Roborock" />
+            </div>
             <div className="md:col-span-2">
               <label htmlFor="url" className="block text-sm font-medium text-muted mb-1">Product URL</label>
               <input type="url" id="url" value={url} onChange={(e) => setUrl(e.target.value)} className={inputClasses} placeholder="https://..." required />
@@ -98,14 +119,14 @@ export const ProductInput: React.FC<ProductInputProps> = ({ onAddProduct, onAddF
         <form onSubmit={handlePasteSubmit} className="space-y-4">
           <div>
             <label htmlFor="pastedText" className="block text-sm font-medium text-muted mb-1">Paste Data Here</label>
-            <p className="text-xs text-muted mb-2">Định dạng: ID, Tên, URL, Website, ScraperType (mỗi sản phẩm một dòng, ScraperType là tùy chọn)</p>
+            <p className="text-xs text-muted mb-2">Định dạng: ID, Tên, URL, Website, ScraperType, Category, Brand (mỗi sản phẩm một dòng, 3 trường cuối là tùy chọn)</p>
             <textarea
               id="pastedText"
               rows={6}
               value={pastedText}
               onChange={(e) => setPastedText(e.target.value)}
               className={inputClasses}
-              placeholder="SKU-003, 4K Monitor, https://mystore.com/monitor, MyStore, generic&#10;SKU-004, Gaming Headset, https://competitor-a.com/headset, Competitor A, woocommerce"
+              placeholder="SKU-003, 4K Monitor, https://mystore.com/monitor, MyStore, generic, Màn hình, Dell&#10;SKU-004, Gaming Headset, https://competitor-a.com/headset, Competitor A, woocommerce, Tai nghe, SteelSeries"
             />
           </div>
           <button type="submit" className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">

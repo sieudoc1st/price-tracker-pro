@@ -25,4 +25,6 @@ export interface Product {
   status: 'idle' | 'loading' | 'checked' | 'error';
   isSimulated?: boolean;
   scraperType: ScraperType;
+  category?: string;
+  brand?: string;
 }

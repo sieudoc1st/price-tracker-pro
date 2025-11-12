@@ -21,10 +21,44 @@ const createTableStmt = db.prepare(`
     name TEXT,
     url TEXT,
     website TEXT,
-    scraperType TEXT
+    scraperType TEXT,
+    category TEXT,
+    brand TEXT
   )
 `);
 createTableStmt.run();
+
+// Kiểm tra và thêm các cột mới nếu chưa tồn tại
+const checkAndAddColumns = () => {
+  try {
+    // Lấy thông tin về cột trong bảng products
+    const columns = db.prepare("PRAGMA table_info(products)").all();
+    const columnNames = columns.map(col => col.name);
+    
+    // Nếu chưa có cột category, thêm nó
+    if (!columnNames.includes('category')) {
+      console.log('Adding category column to products table...');
+      db.exec('ALTER TABLE products ADD COLUMN category TEXT');
+    }
+    
+    // Nếu chưa có cột brand, thêm nó
+    if (!columnNames.includes('brand')) {
+      console.log('Adding brand column to products table...');
+      db.exec('ALTER TABLE products ADD COLUMN brand TEXT');
+    }
+    
+    console.log('Database schema is up to date');
+  } catch (err) {
+    console.error('Error checking/adding columns:', err.message);
+  }
+};
+
+checkAndAddColumns();
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Backend is running' });
+});
 
 // --- API Endpoints for Products ---
 
@@ -42,14 +76,17 @@ app.get('/products', (req, res) => {
 // Thêm sản phẩm mới
 app.post('/products', (req, res) => {
   try {
-    const { instanceId, productId, name, url, website, scraperType } = req.body;
+    const { instanceId, productId, name, url, website, scraperType, category, brand } = req.body;
+    console.log('POST /products received:', { instanceId, productId, name, url, website, scraperType, category, brand });
     if (!instanceId || !productId || !name || !url || !website || !scraperType) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
-    const stmt = db.prepare('INSERT INTO products (instanceId, productId, name, url, website, scraperType) VALUES (?, ?, ?, ?, ?, ?)');
-    const info = stmt.run(instanceId, productId, name, url, website, scraperType);
+    const stmt = db.prepare('INSERT INTO products (instanceId, productId, name, url, website, scraperType, category, brand) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    const info = stmt.run(instanceId, productId, name, url, website, scraperType, category || null, brand || null);
+    console.log('Product inserted successfully:', info);
     res.status(201).json({ id: info.lastInsertRowid, ...req.body });
   } catch (err) {
+    console.error('Error inserting product:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -65,6 +102,32 @@ app.delete('/products/:instanceId', (req, res) => {
     }
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Cập nhật sản phẩm
+app.put('/products/:instanceId', (req, res) => {
+  try {
+    const { instanceId } = req.params;
+    const { productId, name, url, website, scraperType, category, brand } = req.body;
+    console.log('PUT /products/:instanceId received:', { instanceId, productId, name, url, website, scraperType, category, brand });
+    
+    if (!productId || !name || !url || !website || !scraperType) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    
+    const stmt = db.prepare('UPDATE products SET productId = ?, name = ?, url = ?, website = ?, scraperType = ?, category = ?, brand = ? WHERE instanceId = ?');
+    const info = stmt.run(productId, name, url, website, scraperType, category || null, brand || null, instanceId);
+    
+    if (info.changes === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    
+    console.log('Product updated successfully:', info);
+    res.status(200).json({ message: 'Product updated successfully', product: { instanceId, productId, name, url, website, scraperType, category, brand } });
+  } catch (err) {
+    console.error('Error updating product:', err);
     res.status(500).json({ error: err.message });
   }
 });

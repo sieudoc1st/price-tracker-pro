@@ -5,6 +5,7 @@ interface ProductTableProps {
   products: Product[];
   onCheckPrice: (instanceId: string) => void;
   onDeleteProduct: (instanceId: string) => void;
+  onEditProduct: (product: Product) => void;
 }
 
 const LoadingSpinner: React.FC = () => (
@@ -72,7 +73,7 @@ const StatusIndicator: React.FC<{ product: Product; allProducts: Product[] }> = 
     }
 };
 
-export const ProductTable: React.FC<ProductTableProps> = ({ products, onCheckPrice, onDeleteProduct }) => {
+export const ProductTable: React.FC<ProductTableProps> = ({ products, onCheckPrice, onDeleteProduct, onEditProduct }) => {
     if (products.length === 0) {
         return <p className="text-center text-muted py-8">Chưa có sản phẩm nào. Hãy thêm sản phẩm để bắt đầu theo dõi.</p>
     }
@@ -82,6 +83,8 @@ export const ProductTable: React.FC<ProductTableProps> = ({ products, onCheckPri
             <thead className="bg-primary">
                 <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Product</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Category</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Brand</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Website</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Current Price</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Status</th>
@@ -95,6 +98,12 @@ export const ProductTable: React.FC<ProductTableProps> = ({ products, onCheckPri
                         <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-white">{product.name}</div>
                             <div className="text-sm text-muted">{product.productId}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                            {product.category || <span className="text-muted italic">-</span>}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                            {product.brand || <span className="text-muted italic">-</span>}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                            <div className="flex items-center">
@@ -140,6 +149,11 @@ export const ProductTable: React.FC<ProductTableProps> = ({ products, onCheckPri
                                             <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.899 2.186l-1.414 1.414A5.002 5.002 0 005.999 7.49l-.496.497a1 1 0 01-1.414 0l-2-2A1 1 0 012 5V3a1 1 0 011-1h1zm12 14a1 1 0 01-1-1v-2.101a7.002 7.002 0 01-11.899-2.186l1.414-1.414A5.002 5.002 0 0014.001 12.51l.496-.497a1 1 0 011.414 0l2 2a1 1 0 010 1.414l-2 2a1 1 0 01-1 0z" clipRule="evenodd" />
                                         </svg>
                                     )}
+                                </button>
+                                <button onClick={() => onEditProduct(product)} className="text-blue-500 hover:text-blue-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
                                 </button>
                                 <button onClick={() => onDeleteProduct(product.instanceId)} className="text-red-500 hover:text-red-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
