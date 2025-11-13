@@ -15,8 +15,22 @@ interface FilterPanelProps {
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ products, filters, onFilterChange }) => {
   // Lấy danh sách các category và brand duy nhất từ products
-  const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean))) as string[];
-  const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean))) as string[];
+  // Include undefined để filter các sản phẩm không có category/brand
+  const categories = Array.from(new Set(
+    products
+      .map(p => p.category || undefined)
+      .filter((cat, idx, arr) => arr.indexOf(cat) === idx) // unique values
+  )).filter(Boolean) as string[];
+  
+  const brands = Array.from(new Set(
+    products
+      .map(p => p.brand || undefined)
+      .filter((brand, idx, arr) => arr.indexOf(brand) === idx) // unique values
+  )).filter(Boolean) as string[];
+
+  // Check if there are products with no category or no brand
+  const hasUncategorized = products.some(p => !p.category);
+  const hasUnbranded = products.some(p => !p.brand);
 
   const handleClearFilters = () => {
     onFilterChange({
@@ -59,6 +73,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ products, filters, onF
                 className={inputClasses}
               >
                 <option value="">All Categories</option>
+                {hasUncategorized && (
+                  <option value="__uncategorized__">(No Category)</option>
+                )}
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -78,6 +95,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ products, filters, onF
                 className={inputClasses}
               >
                 <option value="">All Brands</option>
+                {hasUnbranded && (
+                  <option value="__unbranded__">(No Brand)</option>
+                )}
                 {brands.map((brand) => (
                   <option key={brand} value={brand}>
                     {brand}

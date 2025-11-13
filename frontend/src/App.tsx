@@ -250,8 +250,25 @@ function App() {
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
       const productIdMatch = product.productId.toLowerCase().includes(filters.productId.toLowerCase());
-      const categoryMatch = !filters.category || (product.category && product.category === filters.category);
-      const brandMatch = !filters.brand || (product.brand && product.brand === filters.brand);
+      
+      // Category filter logic
+      let categoryMatch = true;
+      if (filters.category === '__uncategorized__') {
+        categoryMatch = !product.category; // Show products with no category
+      } else if (filters.category) {
+        categoryMatch = product.category === filters.category;
+      }
+      // If filters.category is empty, show all products
+      
+      // Brand filter logic
+      let brandMatch = true;
+      if (filters.brand === '__unbranded__') {
+        brandMatch = !product.brand; // Show products with no brand
+      } else if (filters.brand) {
+        brandMatch = product.brand === filters.brand;
+      }
+      // If filters.brand is empty, show all products
+      
       return productIdMatch && categoryMatch && brandMatch;
     });
   }, [products, filters]);
