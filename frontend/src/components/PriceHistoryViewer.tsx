@@ -72,23 +72,37 @@ export const PriceHistoryViewer: React.FC<PriceHistoryViewerProps> = ({ products
       return;
     }
 
-    // Prepare CSV content
+    // Helper function to format date as dd/mm/yyyy
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString + 'T00:00:00');
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+
+    // Prepare CSV content with UTF-8 BOM for proper Vietnamese character display
     const headers = ['Product ID', 'Product Name', 'Website', 'Price', 'Date'];
     const rows = priceHistory.map(h => [
       h.productId,
       h.name || '',
       h.website,
       h.price.toLocaleString('vi-VN'),
-      h.date,
+      formatDate(h.date),
     ]);
 
+    // CSV format: escape quotes and wrap cells
     const csvContent = [
       headers.join(','),
       ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
     ].join('\n');
 
+    // Add UTF-8 BOM to ensure Vietnamese characters display correctly
+    const BOM = '\uFEFF';
+    const finalContent = BOM + csvContent;
+
     // Download CSV
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([finalContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
