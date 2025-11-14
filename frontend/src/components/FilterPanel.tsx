@@ -14,6 +14,14 @@ interface FilterPanelProps {
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ products, filters, onFilterChange }) => {
+  // Lấy danh sách các product duy nhất (by productId)
+  const uniqueProducts = Array.from(new Set(
+    products.map(p => p.productId)
+  )).map(productId => {
+    const product = products.find(p => p.productId === productId);
+    return product;
+  }).filter(Boolean) as Product[];
+
   // Lấy danh sách các category và brand duy nhất từ products
   // Include undefined để filter các sản phẩm không có category/brand
   const categories = Array.from(new Set(
@@ -50,16 +58,21 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ products, filters, onF
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label htmlFor="filter-productId" className="block text-sm font-medium text-muted mb-1">
-                Product ID
+                Sản Phẩm
               </label>
-              <input
-                type="text"
+              <select
                 id="filter-productId"
                 value={filters.productId}
                 onChange={(e) => onFilterChange({ ...filters, productId: e.target.value })}
                 className={inputClasses}
-                placeholder="Filter by Product ID..."
-              />
+              >
+                <option value="">Tất Cả Sản Phẩm</option>
+                {uniqueProducts.map((product) => (
+                  <option key={product.productId} value={product.productId}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>

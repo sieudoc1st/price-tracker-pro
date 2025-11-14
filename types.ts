@@ -28,3 +28,13 @@ export interface Product {
   category?: string;
   brand?: string;
 }
+
+export interface PriceHistory {
+  id: string;
+  instanceId: string;
+  productId: string;
+  name: string;
+  website: string;
+  price: number;
+  date: string; // ISO string for the date of the price
+}

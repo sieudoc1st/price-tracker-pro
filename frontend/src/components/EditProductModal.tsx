@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Product, ScraperType, scraperTypeMap } from '../types';
+import { Product, scraperTypeMap } from '../types';
 
 interface EditProductModalProps {
   product: Product;

@@ -4,26 +4,6 @@ import { getDailyPriceHistory, PriceHistory } from '../services/scraperService';
 
 interface PriceHistoryViewerProps {
   products: Product[];
-}
-
-// Format timestamp to Vietnam timezone (GMT+7)
-const formatToVietnamTime = (isoString: string | null): string => {
-  if (!isoString) return '-';
-  try {
-    const date = new Date(isoString);
-    return date.toLocaleString('vi-VN', {
-      timeZone: 'Asia/Ho_Chi_Minh',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return '-';
-  }
 };
 
 export const PriceHistoryViewer: React.FC<PriceHistoryViewerProps> = ({ products }) => {

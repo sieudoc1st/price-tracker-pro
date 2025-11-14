@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react'; // This line is already correct in the provided context
 import { Product, ScraperType, scraperTypeMap } from './types';
 import { fetchProductPrice, simulateFetchProductPrice } from './services/scraperService';
 import { Header } from './components/Header';
@@ -69,7 +69,6 @@ const initialProducts: Product[] = [
   },
 ];
 
-
 function App() {
   const [products, setProducts] = useState<Product[]>(initialProducts);
 
@@ -123,6 +122,10 @@ function App() {
     setProducts(prev => prev.filter(p => p.instanceId !== instanceId));
   };
 
+  const editProduct = (updatedProduct: Product) => {
+    setProducts(prev => prev.map(p => p.instanceId === updatedProduct.instanceId ? updatedProduct : p));
+  };
+
   const checkPrice = useCallback(async (instanceId: string) => {
     setProducts(prev => prev.map(p => p.instanceId === instanceId ? { ...p, status: 'loading' } : p));
     
@@ -170,7 +173,7 @@ function App() {
               Check All Prices
             </button>
           </div>
-          <ProductTable products={products} onCheckPrice={checkPrice} onDeleteProduct={deleteProduct} />
+          <ProductTable products={products} onCheckPrice={checkPrice} onDeleteProduct={deleteProduct} onEditProduct={editProduct} />
         </div>
       </main>
     </div>

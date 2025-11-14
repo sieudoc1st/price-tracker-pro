@@ -1,4 +1,7 @@
-import { ScraperType } from "../types";
+import { Product, ScraperType, PriceHistory } from "../types";
+
+// Đọc URL API từ biến môi trường của Vite.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 /**
  * REAL WEB SCRAPER SERVICE CONNECTOR
@@ -17,8 +20,8 @@ import { ScraperType } from "../types";
  * @returns A promise that resolves to the product price fetched by the backend.
  */
 export const fetchProductPrice = async (url: string, scraperType: ScraperType): Promise<number> => {
-    // URL of your local backend server. Make sure it's running.
-    const backendUrl = 'http://localhost:8080/scrape';
+    // Sử dụng API_BASE_URL đã định nghĩa
+    const backendUrl = `${API_BASE_URL}/scrape`;
     console.log(`Sending scrape request for: ${url} to backend: ${backendUrl} with scraper: ${scraperType}`);
 
     try {
@@ -61,6 +64,83 @@ export const fetchProductPrice = async (url: string, scraperType: ScraperType): 
         throw error;
     }
 };
+
+// Các hàm mới để tương tác với backend
+export const checkBackendHealth = async (): Promise<boolean> => {
+    const response = await fetch(`${API_BASE_URL}/health`);
+    return response.ok;
+};
+
+export const getProducts = async (): Promise<Product[]> => {
+    const response = await fetch(`${API_BASE_URL}/products`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch products');
+    }
+    return response.json();
+};
+
+export const addProduct = async (product: Omit<Product, 'price' | 'lastChecked' | 'status' | 'isSimulated'>): Promise<Product> => {
+    const response = await fetch(`${API_BASE_URL}/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to add product');
+    }
+    return response.json();
+};
+
+export const updateProduct = async (product: Omit<Product, 'price' | 'lastChecked' | 'status' | 'isSimulated'>): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/products/${product.instanceId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to update product');
+    }
+};
+
+export const deleteProduct = async (instanceId: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/products/${instanceId}`, {
+        method: 'DELETE',
+    });
+    if (!response.ok) {
+        throw new Error('Failed to delete product');
+    }
+};
+
+export const savePriceHistory = async (instanceId: string, productId: string, website: string, price: number): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/history`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ instanceId, productId, website, price }),
+    });
+    if (!response.ok) {
+        console.error('Failed to save price history:', await response.text());
+    }
+};
+
+export const getDailyPriceHistory = async (productId?: string, startDate?: string, endDate?: string): Promise<PriceHistory[]> => {
+    const params = new URLSearchParams();
+    if (productId) {
+        params.append('productId', productId);
+    }
+    if (startDate) {
+        params.append('startDate', startDate);
+    }
+    if (endDate) {
+        params.append('endDate', endDate);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/history?${params.toString()}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch price history');
+    }
+    return response.json();
+};
+
 
 /**
  * SIMULATED WEB SCRAPER (FALLBACK)

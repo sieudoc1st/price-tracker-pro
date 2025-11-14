@@ -1,9 +1,11 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Product, ScraperType, scraperTypeMap } from './types';
 import { fetchProductPrice, simulateFetchProductPrice, getProducts, addProduct as addProductService, deleteProduct as deleteProductService, updateProduct as updateProductService, checkBackendHealth, savePriceHistory } from './services/scraperService';
 import { Header } from './components/Header';
+import { Navigation } from './components/Navigation';
 import { ProductInput } from './components/ProductInput';
 import { ProductTable } from './components/ProductTable';
+import { ProductListTable } from './components/ProductListTable';
 import { FilterPanel, FilterOptions } from './components/FilterPanel';
 import { EditProductModal } from './components/EditProductModal';
 import { Pagination } from './components/Pagination';
@@ -78,11 +80,6 @@ const savePriceToCache = (instanceId: string, price: number, lastChecked: string
   }
 };
 
-const getCachedPrice = (instanceId: string): { price: number; lastChecked: string } | null => {
-  const cache = getPriceCache();
-  return cache[instanceId] || null;
-};
-
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -95,7 +92,7 @@ function App() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [activeTab, setActiveTab] = useState<'comparison' | 'history'>('comparison');
+  const [activePage, setActivePage] = useState<'check-price' | 'add-product' | 'price-history'>('check-price');
 
   // Lấy danh sách sản phẩm từ backend khi component được mount
   useEffect(() => {
@@ -347,45 +344,35 @@ function App() {
   return (
     <div className="min-h-screen bg-primary font-sans">
       <Header />
+      <Navigation activePage={activePage} onPageChange={setActivePage} />
       <main className="container mx-auto p-4 md:p-8">
-        {activeTab === 'comparison' ? (
+        {activePage === 'check-price' && (
           <>
-            <ProductInput onAddProduct={addProduct} onAddFromPaste={addProductsFromPaste} />
-            {!isLoading && products.length > 0 && (
-              <FilterPanel products={products} filters={filters} onFilterChange={setFilters} />
-            )}
-            <div className="mt-8 bg-secondary border border-border rounded-lg shadow-xl p-4 md:p-6">
+            <div className="mb-8 bg-secondary border border-border rounded-lg shadow-xl p-4 md:p-6">
               <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                <div className="flex flex-col md:flex-row gap-4 mb-4 md:mb-0">
-                  <h2 className="text-2xl font-bold text-white">Product Comparison</h2>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setActiveTab('comparison')}
-                      className="px-4 py-2 rounded-lg font-bold transition duration-300 bg-accent text-white"
-                    >
-                      Comparison
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('history')}
-                      className="px-4 py-2 rounded-lg font-bold transition duration-300 bg-gray-600 hover:bg-gray-700 text-white"
-                    >
-                      Price History
-                    </button>
-                  </div>
-                </div>
+                <h2 className="text-2xl font-bold text-white mb-4 md:mb-0">Kiểm Tra Giá</h2>
                 <button
                   onClick={checkAllPrices}
                   disabled={isLoading}
                   className="w-full md:w-auto bg-accent hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 disabled:bg-gray-500 disabled:cursor-not-allowed"
                 >
-                  Check All Prices
+                  Kiểm Tra Tất Cả Giá
                 </button>
               </div>
               {isLoading ? (
-                 <p className="text-center text-muted py-8">Loading products from database...</p>
+                <p className="text-center text-muted py-8">Đang tải sản phẩm từ cơ sở dữ liệu...</p>
+              ) : products.length === 0 ? (
+                <p className="text-center text-muted py-8">Chưa có sản phẩm nào. Hãy thêm sản phẩm từ trang "Thêm Sản Phẩm".</p>
               ) : (
                 <>
-                  <ProductTable products={paginatedProducts} onCheckPrice={checkPrice} onDeleteProduct={deleteProduct} onEditProduct={openEditModal} />
+                  {products.length > 0 && (
+                    <FilterPanel products={products} filters={filters} onFilterChange={setFilters} />
+                  )}
+                  <ProductTable 
+                    products={paginatedProducts} 
+                    onCheckPrice={checkPrice} 
+                    showActions={false}
+                  />
                   {filteredProducts.length > 0 && (
                     <div className="mt-6">
                       <Pagination
@@ -402,18 +389,25 @@ function App() {
               )}
             </div>
           </>
-        ) : (
-          <div className="relative">
-            <div className="fixed top-20 left-4 md:left-8 z-10">
-              <button
-                onClick={() => setActiveTab('comparison')}
-                className="px-4 py-2 rounded-lg font-bold transition duration-300 bg-gray-600 hover:bg-gray-700 text-white"
-              >
-                ← Back to Comparison
-              </button>
-            </div>
+        )}
+
+        {activePage === 'add-product' && (
+          <>
+            <ProductInput onAddProduct={addProduct} onAddFromPaste={addProductsFromPaste} />
+            {!isLoading && products.length > 0 && (
+              <ProductListTable 
+                products={products} 
+                onEditProduct={openEditModal} 
+                onDeleteProduct={deleteProduct}
+              />
+            )}
+          </>
+        )}
+
+        {activePage === 'price-history' && (
+          <>
             <PriceHistoryViewer products={products} />
-          </div>
+          </>
         )}
 
         {editingProduct && (
