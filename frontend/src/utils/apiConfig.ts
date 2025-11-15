@@ -1,11 +1,10 @@
-// API endpoint helper - uses relative paths for production, localhost for development
+// API endpoint helper - uses environment variables or detects from hostname
 export const getApiBaseUrl = (): string => {
+  // Fallback: detect based on hostname
   if (typeof window === 'undefined') {
     return 'http://localhost:8080';
   }
   
-  // In production/staging, use relative paths or full domain
-  // In development, use localhost:8080
   const isDevelopment = window.location.hostname === 'localhost' || 
                        window.location.hostname === '127.0.0.1';
   
@@ -13,13 +12,19 @@ export const getApiBaseUrl = (): string => {
     return 'http://localhost:8080';
   }
   
-  // For production, use relative paths (proxy through same domain)
-  return window.location.origin;
+  // For production, use relative path (proxy through same domain via Nginx)
+  return '';
 };
 
 export const getApiUrl = (endpoint: string): string => {
   const baseUrl = getApiBaseUrl();
-  // Ensure endpoint starts with /
   const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  
+  // If baseUrl is empty, just return the path (relative URL)
+  if (!baseUrl) {
+    return path;
+  }
+  
+  // Otherwise combine base URL with path
   return `${baseUrl}${path}`;
 };
